@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FORMEDIL Piemonte | Formazione e Sicurezza in Edilizia</title>
+  <meta name="description" content="FORMEDIL Piemonte, ente paritetico regionale per la formazione professionale, la sicurezza nei cantieri e i servizi al lavoro nel settore edile in Piemonte.">
+  <meta name="theme-color" content="#991B1B">
+  <meta property="og:title" content="FORMEDIL Piemonte">
+  <meta property="og:description" content="Formazione professionale, sicurezza nei cantieri e servizi al lavoro nel settore edile in Piemonte.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/fa/css/fontawesome.min.css">
+  <link rel="stylesheet" href="assets/fa/css/solid.min.css">
+  <link rel="stylesheet" href="assets/fa/css/brands.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="preconnect" href="https://script.google.com">
+  <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
+</head>
+<body>
+  <a class="skip-link" href="#contenuto">Vai al contenuto</a>
+
+  <header class="site-header">
+    <div class="nav-container">
+      <a class="logo-box" id="logoBox" href="#/" aria-label="FORMEDIL Piemonte – Home">
+        <span class="logo-text">FORMEDIL Piemonte</span>
+      </a>
+      <button class="mobile-menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="mainNav">
+        <i class="fa-solid fa-bars" aria-hidden="true"></i> <span id="menuBtnLabel">Menu</span>
+      </button>
+      <nav aria-label="Menu principale">
+        <ul class="nav-links" id="mainNav"></ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenuto" tabindex="-1">
+    <div class="loader" id="loader"><i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i><span>Caricamento in corso...</span></div>
+    <noscript><div class="alert-box">Per consultare il sito è necessario abilitare JavaScript nel browser.</div></noscript>
+  </main>
+
+  <footer class="site-footer" id="footer"></footer>
+
+  <!-- Finestra dettaglio notizia -->
+  <div class="modal-overlay" id="newsModal" role="dialog" aria-modal="true" aria-labelledby="newsModalTitle">
+    <div class="modal-card">
+      <button class="modal-close-btn" type="button" data-close aria-label="Chiudi"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+      <div id="newsModalBody"></div>
+    </div>
+  </div>
+
+  <!-- Finestra modulo richiesta corso -->
+  <div class="modal-overlay" id="formModal" role="dialog" aria-modal="true" aria-labelledby="formModalTitle">
+    <div class="modal-card">
+      <button class="modal-close-btn" type="button" data-close aria-label="Chiudi"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+      <div id="formModalBody"></div>
+    </div>
+  </div>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
