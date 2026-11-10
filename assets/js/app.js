@@ -192,12 +192,15 @@
     chiudiMenu();
     chiudiModali(true);
     svuota(main);
+    document.title = T('sito_titolo', 'FORMEDIL Piemonte');
     var pagine = { 'home': pHome, 'chi-siamo': pChiSiamo, 'corsi': pCorsi, 'richiesta': pCorsi, 'scuole': pScuole, 'lavoro': pLavoro, 'news': pNews };
     var legali = D.legali || {};
     if (pagine[r.pagina]) pagine[r.pagina](r);
     else if (legali[r.pagina]) pLegale(r.pagina);
     else pNonTrovata();
     evidenziaMenu(r.pagina === 'richiesta' ? 'corsi' : r.pagina);
+    var voce = (D.menu || []).filter(function (m) { return m.id === r.pagina; })[0];
+    if (voce && r.pagina !== 'home') document.title = voce.etichetta + ' | FORMEDIL Piemonte';
     if (r.pagina === 'news' && r.id) apriNews(r.id);
     if (r.pagina === 'richiesta') apriModulo();
     if (daNavigazione) { window.scrollTo(0, 0); main.focus({ preventScroll: true }); }
