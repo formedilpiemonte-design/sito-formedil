@@ -334,12 +334,6 @@
       if (r.q.categoria) statoCorsi.cat = r.q.categoria;
     }
     statoCorsi.limite = PAGINA_CORSI;
-    main.appendChild(banner('corsi', T('corsi_titolo'), T('corsi_sottotitolo')));
-    var w = h('div', { class: 'section-wrap' });
-    w.appendChild(h('div', { class: 'cta-box' },
-      h('div', null, h('h3', { text: T('corsi_cta_titolo') }), h('p', { text: T('corsi_cta_testo') })),
-      h('button', { class: 'btn btn-gold', type: 'button', onclick: function () { apriModulo(); } }, icona('fa-envelope'), ' ', T('corsi_cta_btn'))));
-
     var corsi = D.corsi || [];
     var opt = function (v, t, sel) { return h('option', { value: v, selected: sel ? 'selected' : null, text: t }); };
     var selProv = h('select', { 'aria-label': T('corsi_filtro_provincia') }, opt('ALL', T('corsi_filtro_provincia'), statoCorsi.prov === 'ALL'),
@@ -353,14 +347,26 @@
     var selStato = h('select', { 'aria-label': T('corsi_filtro_stato') }, opt('ALL', T('corsi_filtro_stato'), statoCorsi.stato === 'ALL'),
       stati.map(function (s) { return opt(s, s, statoCorsi.stato === s); }));
     var cerca = h('input', { type: 'search', placeholder: T('corsi_cerca_placeholder'), 'aria-label': T('corsi_cerca_placeholder'), value: statoCorsi.q });
-    w.appendChild(h('div', { class: 'filter-bar', role: 'search' }, cerca, selProv, selCat, selTipo, selStato));
+    var azzera = h('button', { class: 'btn-link', type: 'button', onclick: function () {
+      cerca.value = ''; selProv.value = 'ALL'; selCat.value = 'ALL'; selTipo.value = 'ALL'; selStato.value = 'ALL'; statoCorsi.limite = PAGINA_CORSI; aggiorna(); } },
+      icona('fa-rotate-left'), ' Azzera filtri');
     var info = h('div', { class: 'results-info', 'aria-live': 'polite' });
-    var lista = h('div');
+    var lista = h('div', { class: 'corsi-lista-interna' });
     var altro = h('div', { class: 'more-wrap' });
-    w.appendChild(info); w.appendChild(lista); w.appendChild(altro);
-    w.appendChild(h('p', { class: 'note-dati' }, T('corsi_avviso'), ' ',
-      D.impostazioni && D.impostazioni.ultimaScansione ? T('corsi_aggiornato') + ' ' + D.impostazioni.ultimaScansione + '.' : ''));
-    main.appendChild(w);
+
+    var colonnaSx = h('aside', { class: 'corsi-side', 'aria-label': 'Ricerca e filtri' },
+      h('div', { class: 'breadcrumb breadcrumb-light' }, h('a', { href: '#/', text: T('generale_home', 'Home') }), ' › ', h('span', { text: T('corsi_titolo') })),
+      h('h1', { class: 'corsi-side-title', text: T('corsi_titolo') }),
+      T('corsi_sottotitolo') ? h('p', { class: 'corsi-side-sub', text: T('corsi_sottotitolo') }) : null,
+      h('div', { class: 'cta-box cta-compatta' },
+        h('h2', { text: T('corsi_cta_titolo') }), h('p', { text: T('corsi_cta_testo') }),
+        h('button', { class: 'btn btn-gold', type: 'button', onclick: function () { apriModulo(); } }, icona('fa-envelope'), ' ', T('corsi_cta_btn'))),
+      h('div', { class: 'filter-stack', role: 'search' }, cerca, selProv, selCat, selTipo, selStato, azzera),
+      info,
+      h('p', { class: 'note-dati' }, T('corsi_avviso'), ' ',
+        D.impostazioni && D.impostazioni.ultimaScansione ? T('corsi_aggiornato') + ' ' + D.impostazioni.ultimaScansione + '.' : ''));
+    var colonnaDx = h('section', { class: 'corsi-scroll', tabindex: '0', 'aria-label': 'Elenco corsi' }, lista, altro);
+    main.appendChild(h('div', { class: 'corsi-layout' }, colonnaSx, colonnaDx));
 
     function aggiorna() {
       statoCorsi.prov = selProv.value; statoCorsi.cat = selCat.value; statoCorsi.tipo = selTipo.value;
@@ -378,6 +384,7 @@
         return true;
       });
       svuota(lista); svuota(info); svuota(altro);
+      if (statoCorsi.limite === PAGINA_CORSI) colonnaDx.scrollTop = 0;
       info.appendChild(h('span', { text: f.length + ' ' + T('corsi_risultati', 'corsi trovati') }));
       if (!f.length) lista.appendChild(h('p', { class: 'empty', text: T('corsi_vuoto') }));
       f.slice(0, statoCorsi.limite).forEach(function (c) { lista.appendChild(cardCorso(c)); });
@@ -636,5 +643,12 @@
   }
 
   /* ------------------------------------------------------------------ AVVIO */
+  function misuraIntestazione() {
+    var hh = document.querySelector('.site-header');
+    if (hh) document.documentElement.style.setProperty('--header-h', hh.offsetHeight + 'px');
+  }
+  window.addEventListener('resize', misuraIntestazione);
+  window.addEventListener('load', misuraIntestazione);
+  setTimeout(misuraIntestazione, 1500);
   caricaDati();
 })();

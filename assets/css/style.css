@@ -280,3 +280,33 @@ footer.site-footer a:hover { text-decoration: underline; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
 .modal-card > div > .news-meta:first-child { margin-right: 3.2rem; }
+
+/* ---------- catalogo corsi: colonna filtri fissa + elenco che scorre ---------- */
+:root { --header-h: 72px; --sfondo-elenco: #F0EADC; }
+.corsi-layout { display: grid; grid-template-columns: 340px 1fr; gap: 0; max-width: 1440px; margin: 0 auto; }
+.corsi-side { padding: 1.4rem 1.25rem; background: #FFF; border-right: 1px solid var(--border);
+  position: sticky; top: var(--header-h); align-self: start; height: calc(100vh - var(--header-h)); overflow-y: auto; }
+.breadcrumb-light { color: var(--muted); }
+.breadcrumb-light a { color: var(--primary-dark); }
+.corsi-side-title { font-size: 1.35rem; color: var(--primary-dark); line-height: 1.25; margin: .2rem 0 .2rem; }
+.corsi-side-sub { color: var(--muted); font-size: .88rem; margin-bottom: 1rem; }
+.cta-compatta { flex-direction: column; align-items: stretch; padding: 1rem; margin-bottom: 1.2rem; gap: .5rem; }
+.cta-compatta h2 { color: var(--primary-dark); font-size: 1rem; }
+.cta-compatta p { color: var(--muted); font-size: .84rem; }
+.cta-compatta .btn { width: 100%; }
+.filter-stack { display: flex; flex-direction: column; gap: .6rem; margin-bottom: 1rem; }
+.filter-stack select, .filter-stack input { width: 100%; padding: .6rem .8rem; border-radius: 6px; border: 1px solid #CBD5E1; font: inherit; font-size: .9rem; font-weight: 600; min-height: 44px; background: #FFF; color: var(--dark); }
+.filter-stack input { font-weight: 500; }
+.btn-link { background: none; border: none; color: var(--primary); font: inherit; font-weight: 600; font-size: .85rem; cursor: pointer; text-align: left; padding: .4rem 0; min-height: 36px; }
+.btn-link:hover { text-decoration: underline; }
+.corsi-side .results-info { font-weight: 700; color: var(--dark); font-size: .95rem; }
+.corsi-side .note-dati { text-align: left; margin-top: .75rem; }
+.corsi-scroll { background: var(--sfondo-elenco); height: calc(100vh - var(--header-h)); overflow-y: scroll; padding: 1.25rem 1.25rem 2rem;
+  scrollbar-color: #707070 var(--sfondo-elenco); position: sticky; top: var(--header-h); }
+.corsi-scroll:focus-visible { outline: 3px solid var(--amber-text); outline-offset: -3px; }
+.corsi-scroll .course-card { margin-bottom: .9rem; }
+@media (max-width: 960px) {
+  .corsi-layout { grid-template-columns: 1fr; }
+  .corsi-side { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+  .corsi-scroll { position: static; height: auto; overflow: visible; }
+}
