@@ -124,11 +124,24 @@
       h('p', null, h('button', { class: 'btn btn-outline', type: 'button', onclick: function () { location.reload(); } }, 'Riprova'))));
   }
 
+  function datiStrutturati() {
+    var a = D.anagrafica || {};
+    var el = document.getElementById('ld-org') || document.head.appendChild(h('script', { type: 'application/ld+json', id: 'ld-org' }));
+    var o = { '@context': 'https://schema.org', '@type': 'EducationalOrganization', name: a.entity_name || 'FORMEDIL Piemonte',
+              url: 'https://www.formedilpiemonte.it/' };
+    if (a.legal_address) o.address = a.legal_address;
+    if (a.phone) o.telephone = a.phone;
+    if (a.email) o.email = a.email;
+    if (a.facebook_url) o.sameAs = [a.facebook_url];
+    el.textContent = JSON.stringify(o);
+  }
+
   var avviato = false;
   function avvia() {
     document.title = T('sito_titolo', document.title);
     var md = document.querySelector('meta[name="description"]');
     if (md && T('sito_descrizione')) md.setAttribute('content', T('sito_descrizione'));
+    datiStrutturati();
     disegnaIntestazione();
     disegnaFooter();
     disegnaPagina();
@@ -203,6 +216,9 @@
     if (voce && r.pagina !== 'home') document.title = voce.etichetta + ' | FORMEDIL Piemonte';
     if (r.pagina === 'news' && r.id) apriNews(r.id);
     if (r.pagina === 'richiesta') apriModulo();
+    if (D.impostazioni && D.impostazioni.statistiche && /^https:/.test(API) && /^[a-z0-9-]{1,30}$/.test(r.pagina)) {
+      try { fetch(API + '?azione=visita&p=' + r.pagina, { keepalive: true }).catch(function () {}); } catch (e) {}
+    }
     if (daNavigazione) { window.scrollTo(0, 0); main.focus({ preventScroll: true }); }
   }
 
@@ -235,7 +251,7 @@
     if (nCorsi > 0 && prossimi.length) {
       var lista = h('div');
       prossimi.forEach(function (c) { lista.appendChild(cardCorso(c)); });
-      main.appendChild(h('section', { class: 'section-wrap' },
+      main.appendChild(h('section', { class: 'section-wrap home-corsi' },
         intestazioneSezione(T('home_corsi_titolo'), T('home_corsi_sottotitolo'), 'fa-calendar-alt'),
         lista,
         h('div', { class: 'more-wrap' }, h('a', { class: 'btn btn-outline', href: '#/corsi' }, T('home_corsi_vedi_tutti'), ' ', icona('fa-arrow-right')))));
@@ -248,6 +264,8 @@
         icona(c.icona), h('h3', { text: c.titolo }), h('p', { text: c.testo })));
     });
     main.appendChild(h('section', { class: 'section-wrap', style: 'padding-top:1rem' }, qa));
+    var sN = main.querySelector('.featured-news-wrap'), sC = main.querySelector('.home-corsi');
+    if (D.impostazioni && D.impostazioni.homeCorsiPrima && sN && sC) main.insertBefore(sC, sN);
   }
 
   /* ------------------------------------------------------------------ CHI SIAMO */
@@ -320,7 +338,8 @@
         c.orario ? h('span', null, icona('fa-clock'), ' ', c.orario) : null,
         h('span', null, icona('fa-hourglass-half'), ' ', h('strong', { text: T('corsi_etichetta_durata', 'Durata') + ': ' }), durata),
         h('span', null, icona('fa-euro-sign'), ' ', h('strong', { text: T('corsi_etichetta_costo', 'Costo') + ': ' }), c.costo || assente),
-        c.sede ? h('span', null, icona('fa-building'), ' ', h('strong', { text: T('corsi_etichetta_sede', 'Sede') + ': ' }), c.sede) : null,
+        c.sede ? h('span', null, icona('fa-building'), ' ', h('strong', { text: T('corsi_etichetta_sede', 'Sede') + ': ' }), c.sede)
+          : (sc.sedeCorsi ? h('span', null, icona('fa-building'), ' ', h('strong', { text: T('corsi_etichetta_sede_predefinita', 'Sede abituale') + ': ' }), sc.sedeCorsi) : null),
         c.modalita ? h('span', null, icona('fa-laptop'), ' ', c.modalita) : null),
       h('div', { class: 'course-action-group' },
         cls ? h('span', { class: 'badge-status ' + cls, text: c.stato }) : null,
@@ -504,7 +523,14 @@
       if (n.didascalia) b.appendChild(h('p', { class: 'modal-img-caption', text: n.didascalia }));
     }
     if (n.sommario) b.appendChild(h('div', { class: 'modal-summary', text: n.sommario }));
-    b.appendChild(h('div', { class: 'modal-body', text: n.testo || '' }));
+    var corpo = h('div', { class: 'modal-body', text: n.testo || '' });
+    b.appendChild(corpo);
+    if (n.testo === undefined) {
+      corpo.textContent = T('generale_caricamento', 'Caricamento in corso...');
+      fetch(API + '?azione=news&id=' + encodeURIComponent(n.id)).then(function (r) { return r.json(); })
+        .then(function (j) { n.testo = (j && j.ok) ? (j.testo || '') : ''; corpo.textContent = n.testo; })
+        .catch(function () { corpo.textContent = ''; });
+    }
     if (n.allegato) b.appendChild(h('a', { class: 'btn btn-gold', href: n.allegato, target: '_blank', rel: 'noopener noreferrer', style: 'width:100%' }, icona('fa-file-pdf'), ' ', T('news_allegato_btn')));
     apriModale('newsModal', function () { if (/^#\/news\//.test(location.hash)) history.replaceState(null, '', '#/news'); });
   }
